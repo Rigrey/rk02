@@ -8,11 +8,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
     - name: Set up CMake
       uses: lukka/run-cmake@v10.7
       with:
         cmakeListsTxtPath: ./CMakeLists.txt
+        buildPresetCmdString: [`--build`]
 
     - name: Build
       run: |
-        cmake --build _builds
+        cmake --build .
