@@ -8,9 +8,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-
+    - uses: lukka/get-cmake@latest
     - name: Set up CMake
-      uses: lukka/get-cmake@latest
       uses: lukka/run-cmake@latest
       with:
         cmakeListsOrSettingsJson: .
