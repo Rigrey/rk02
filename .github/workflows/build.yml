@@ -24,3 +24,12 @@ jobs:
 
     - name: Build
       run: cmake --build _build
+
+    - name: First Try
+      run: ./_build/MyProxyApp
+
+    - name: and small check
+      run: cat log.txt
+
+    - name: try
+      run: cat ./_build/log.txt
