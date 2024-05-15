@@ -1,20 +1,29 @@
-name: CMake Build
+name: C++ CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v2
 
-    - name: Set up CMake
-      uses: lukka/run-cmake@v10.7
-      with:
-        cmakeListsTxtPath: ./CMakeLists.txt
-        buildPresetCmdString: [`--build`]
+    - name: Create Build Directory
+      run: mkdir build
+
+    - name: Change to Build Directory
+      run: cd build
+
+    - name: Install CMake and other build essentials
+      run: sudo apt-get update && sudo apt-get install -y cmake g++ make
+
+    - name: Run CMake
+      run: cmake ..
 
     - name: Build
-      run: |
-        cmake --build .
+      run: cmake --build .
