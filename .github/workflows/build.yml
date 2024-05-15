@@ -25,11 +25,5 @@ jobs:
     - name: Build
       run: cmake --build _build
 
-    - name: First Try
+    - name: Without tests:
       run: ./_build/MyProxyApp
-
-    - name: and small check
-      run: cat log.txt
-
-    - name: try
-      run: cat ./_build/log.txt
