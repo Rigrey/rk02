@@ -25,5 +25,5 @@ jobs:
     - name: Build
       run: cmake --build _build
 
-    - name: Without tests:
+    - name: Without tests
       run: ./_build/MyProxyApp
