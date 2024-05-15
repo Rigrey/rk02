@@ -24,7 +24,8 @@ jobs:
 
     - name: list files to check
       run: ls -la
-      run: echo "thing"
+
+    - name: list files to check in prev dir
       run: ls -la ./..
 
     - name: Run CMake
