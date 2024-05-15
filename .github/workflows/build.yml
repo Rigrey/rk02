@@ -7,12 +7,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: lukka/get-cmake@latest
+    - uses: actions/checkout@v4
     - name: Set up CMake
       uses: lukka/run-cmake@v10.7
       with:
-        cmakeListsOrSettingsJson: .
+        cmakeListsTxtPath: ./CMakeLists.txt
 
     - name: Build
       run: |
