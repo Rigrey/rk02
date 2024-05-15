@@ -1,11 +1,23 @@
 cmake_minimum_required(VERSION 3.10)
-project(MyProxyApp)
+project(MyProject)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(MyProxyApp main.cpp)
+option(BUILD_PROXY_APP "Build MyProxyApp" OFF)
+option(BUILD_TESTS "Build tests" OFF)
 
-add_library(Proxy Proxy.cpp)
+if(BUILD_PROXY_APP)
+    add_executable(MyProxyApp main.cpp)
+    add_library(Proxy Proxy.cpp)
+    target_link_libraries(MyProxyApp Proxy)
+endif()
 
-target_link_libraries(MyProxyApp Proxy)
+if(BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(third-party/gtest)
+    add_library(Proxy Proxy.cpp)
+    add_executable(check ./tests/test.cpp)
+    target_link_libraries(check Proxy gtest_main)
+    add_test(NAME check COMMAND check)
+endif()

@@ -18,7 +18,7 @@
 class Subject
 {
 public:
-  virtual ~Subject() { /* ... */ }
+  virtual ~Subject() { std::cout << "im deleted" << std::endl; }
 
   virtual void request() = 0;
   // ...
@@ -48,6 +48,7 @@ public:
   Proxy()
   {
     subject = new RealSubject();
+    std::cout << "created" << std::endl;
   }
   
   ~Proxy()
@@ -58,6 +59,10 @@ public:
   void request()
   {
     subject->request();
+  }
+
+  bool isRealSubjectCreated() {
+    return (&subject == nullptr) ? false : true;
   }
   // ...
 

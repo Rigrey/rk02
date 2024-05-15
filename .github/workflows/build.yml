@@ -19,11 +19,14 @@ jobs:
     - name: Install CMake and other build essentials
       run: sudo apt-get update && sudo apt-get install -y cmake g++ make
 
+    - name: get GTests
+      run: git submodule update --init
+
     - name: Run CMake
-      run: cmake -H. -B_build
+      run: cmake -H. -B_build -DBUILD_TESTS=ON
 
-    - name: Build
-      run: cmake --build _build
+    - name: Build tests
+      run: cmake --build _build --target check
 
-    - name: Without tests
-      run: ./_build/MyProxyApp
+    - name: Start tests
+      run: ./_build/check
