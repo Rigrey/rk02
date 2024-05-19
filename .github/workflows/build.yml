@@ -47,8 +47,7 @@ jobs:
           cmake --build _build --config Release
           cpack -G DragNDrop --config _build/CPackConfig.cmake
         shell: bash
-      - name: Tree
-        run: ls -la
+
       - name: Upload Release Assets
         uses: actions/upload-artifact@v3
         with:
@@ -77,8 +76,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: _build/*.deb
-          asset_name: $(basename _build/*.deb)
+          asset_path: ./*.deb
+          asset_name: $(basename ./*.deb)
           asset_content_type: application/octet-stream
 
       - name: Upload RPM
@@ -88,8 +87,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: _build/*.rpm
-          asset_name: $(basename _build/*.rpm)
+          asset_path: ./*.rpm
+          asset_name: $(basename ./*.rpm)
           asset_content_type: application/octet-stream
 
       - name: Upload DMG
@@ -99,6 +98,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: _build/*.dmg
-          asset_name: $(basename _build/*.dmg)
+          asset_path: ./*.dmg
+          asset_name: $(basename ./*.dmg)
           asset_content_type: application/octet-stream
