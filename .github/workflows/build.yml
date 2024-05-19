@@ -13,8 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-
+        os: [ubuntu-latest, macos-latest]
     steps:
       - uses: actions/checkout@v4
 
@@ -50,13 +49,6 @@ jobs:
           cpack -G DragNDrop --config _build/CPackConfig.cmake
         shell: bash
 
-      - name: Build and package on Windows
-        if: matrix.os == 'windows-latest'
-        run: |
-          cmake --build _build --config Release
-          cpack -G WIX --config _build/CPackConfig.cmake
-        shell: bash
-
       - name: Upload Release Assets
         if: startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-artifact@v2
@@ -66,7 +58,6 @@ jobs:
             _build/*.deb
             _build/*.rpm
             _build/*.dmg
-            _build/*.msi
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
@@ -111,15 +102,4 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: _build/*.dmg
           asset_name: $(basename _build/*.dmg)
-          asset_content_type: application/octet-stream
-
-      - name: Upload MSI
-        if: matrix.os == 'windows-latest' && startsWith(github.ref, 'refs/tags/')
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: _build/*.msi
-          asset_name: $(basename _build/*.msi)
           asset_content_type: application/octet-stream
