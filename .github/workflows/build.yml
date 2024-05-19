@@ -3,24 +3,120 @@ name: C++ CI
 on:
   push:
     branches: [ main ]
+    tags:
+      - 'v*.*.*'
   pull_request:
     branches: [ main ]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: get GTests
-      run: git submodule update --init
+      - name: get GTests
+        run: git submodule update --init
 
-    - name: Run CMake
-      run: cmake -H. -B_build -DBUILD_TESTS=ON
+      - name: Run CMake
+        run: cmake -H. -B_build -DBUILD_TESTS=ON
 
-    - name: Build tests
-      run: cmake --build _build --target check
+      - name: Build tests
+        run: cmake --build _build --target check
 
-    - name: Start tests
-      run: ./_build/check
+      - name: Start tests
+        run: ./_build/check
+
+      - name: Build and package on Ubuntu
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rpm
+          cmake --build _build --config Release
+          cpack -G DEB --config _build/CPackConfig.cmake
+          cpack -G RPM --config _build/CPackConfig.cmake
+        shell: bash
+
+      - name: Build and package on macOS
+        if: matrix.os == 'macos-latest'
+        run: |
+          cmake --build _build --config Release
+          cpack -G DragNDrop --config _build/CPackConfig.cmake
+        shell: bash
+
+      - name: Build and package on Windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          cmake --build _build --config Release
+          cpack -G WIX --config _build/CPackConfig.cmake
+        shell: bash
+
+      - name: Upload Release Assets
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-artifact@v2
+        with:
+          name: packages
+          path: |
+            _build/*.deb
+            _build/*.rpm
+            _build/*.dmg
+            _build/*.msi
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload DEB
+        if: matrix.os == 'ubuntu-latest' && startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: _build/*.deb
+          asset_name: $(basename _build/*.deb)
+          asset_content_type: application/octet-stream
+
+      - name: Upload RPM
+        if: matrix.os == 'ubuntu-latest' && startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: _build/*.rpm
+          asset_name: $(basename _build/*.rpm)
+          asset_content_type: application/octet-stream
+
+      - name: Upload DMG
+        if: matrix.os == 'macos-latest' && startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: _build/*.dmg
+          asset_name: $(basename _build/*.dmg)
+          asset_content_type: application/octet-stream
+
+      - name: Upload MSI
+        if: matrix.os == 'windows-latest' && startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: _build/*.msi
+          asset_name: $(basename _build/*.msi)
+          asset_content_type: application/octet-stream
