@@ -27,10 +27,10 @@ jobs:
       - name: Run CMake
         run: cmake -H. -B_build -DBUILD_TESTS=ON
 
-      - name: Build tests
-        run: cmake --build _build --target check
+      - name: Build project
+        run: cmake --build _build --config Release
 
-      - name: Start tests
+      - name: Run tests
         run: ./_build/check
 
       - name: Build and package on Ubuntu

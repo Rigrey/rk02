@@ -23,7 +23,7 @@ if(BUILD_TESTS)
 endif()
 
 add_executable(demo ${CMAKE_CURRENT_SOURCE_DIR}/demo/main.cpp)
-target_link_libraries(demo proxy)
+target_link_libraries(demo Proxy)
 install(TARGETS demo RUNTIME DESTINATION bin)
 
 include(CPackConfig.cmake)
