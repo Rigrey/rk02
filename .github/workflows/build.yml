@@ -47,15 +47,16 @@ jobs:
           cmake --build _build --config Release
           cpack -G DragNDrop --config _build/CPackConfig.cmake
         shell: bash
-
+      - name: Tree
+        run: ls -la
       - name: Upload Release Assets
         uses: actions/upload-artifact@v3
         with:
           name: packages
           path: |
-            _build/*.deb
-            _build/*.rpm
-            _build/*.dmg
+            *.deb
+            *.rpm
+            *.dmg
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
