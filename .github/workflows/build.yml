@@ -3,7 +3,7 @@ name: C++ CI
 on:
   push:
     branches: [ main ]
-    tags: [ 'v*.*.*' ] # Trigger on tag pushes following the pattern v*.*.*
+    tags: [ 'v*' ]
   pull_request:
     branches: [ main ]
 
