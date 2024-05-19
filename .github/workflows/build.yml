@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest]
 
     steps:
       - uses: actions/checkout@v4
@@ -38,13 +38,6 @@ jobs:
           cmake --build _build --config Release
           cpack -G DEB --config _build/CPackConfig.cmake
           cpack -G RPM --config _build/CPackConfig.cmake
-        shell: bash
-
-      - name: Build and package on macOS
-        if: matrix.os == 'macos-latest'
-        run: |
-          cmake --build _build --config Release
-          cpack -G DragNDrop --config _build/CPackConfig.cmake
         shell: bash
 
       - name: Build and package on Windows
